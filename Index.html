@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Torneo Tennis Singolo · 26 Giocatori · Preliminari + Tabellone a 16</title>
+<style>
+  :root {
+    --clay: #c85228;
+    --clay-dark: #9e3a16;
+    --clay-light: #fdf3ef;
+    --court-green: #14532d;
+    --court-green-mid: #166534;
+    --court-green-soft: #dcfce7;
+    --ball-yellow: #d9f99d;
+    --ball-accent: #bef264;
+    --ball-dark: #3f6212;
+    --gold: #f59e0b;
+    --bg: #f8f5f2;
+    --card: #ffffff;
+    --text: #1c1917;
+    --muted: #57534e;
+    --border: #e7e5e4;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 20px 20px, rgba(200,82,40,0.04) 2px, transparent 0),
+      radial-gradient(circle at 60px 60px, rgba(20,83,45,0.04) 2px, transparent 0);
+    background-size: 80px 80px;
+    color: var(--text); padding-bottom: 60px;
+  }
+
+  /* Header con grafica a campo in terra battuta / erba */
+  header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--clay-dark) 0%, var(--clay) 52%, var(--court-green) 100%);
+    color: white; padding: 18px 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    border-bottom: 4px solid var(--ball-accent);
+  }
+  .court-lines-bg {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.16;
+  }
+  .header-inner {
+    position: relative; z-index: 2; max-width: 1380px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px;
+  }
+  .brand-box { display: flex; align-items: center; gap: 14px; }
+  .brand-emblem {
+    width: 54px; height: 54px; border-radius: 14px;
+    background: rgba(255,255,255,0.16); border: 2px solid rgba(255,255,255,0.45);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  header h1 { margin: 0; font-size: 1.22rem; letter-spacing: 0.2px; }
+  .header-subtitle { font-size: 0.84rem; opacity: 0.94; margin-top: 3px; }
+  .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  button {
+    border: none; border-radius: 9px; padding: 10px 14px; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; transition: transform 0.1s, opacity 0.2s, box-shadow 0.2s; min-height: 42px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  button:active { transform: scale(0.97); }
+  .btn-light { background: rgba(255,255,255,0.18); color: white; border: 1px solid rgba(255,255,255,0.28); }
+  .btn-light:hover { background: rgba(255,255,255,0.28); }
+  .btn-ball { background: var(--ball-accent); color: var(--court-green); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  .btn-ball:hover { background: #d9f99d; }
+  .btn-clay { background: var(--clay); color: white; }
+  .btn-danger { background: #b91c1c; color: white; }
+
+  .ipad-notice {
+    background: #fffbeb; border-bottom: 1px solid #fde68a; color: #92400e;
+    padding: 10px 16px; font-size: 0.85rem; line-height: 1.4;
+  }
+
+  /* Barra regole con mini-illustrazione */
+  .rules-bar {
+    background: white; border-bottom: 1px solid var(--border);
+    padding: 10px 18px; font-size: 0.85rem;
+  }
+  .rules-inner {
+    max-width: 1380px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;
+  }
+  .rule-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #f5f5f4; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--text); font-weight: 500;
+  }
+  .rule-pill strong { color: var(--clay-dark); }
+
+  /* Navigazione a schede */
+  .tabs {
+    display: flex; background: white; border-bottom: 2px solid var(--border);
+    position: sticky; top: 0; z-index: 90; overflow-x: auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .tab {
+    flex: 1; text-align: center; padding: 14px 12px; font-weight: 700; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; font-size: 0.94rem;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .tab.active { color: var(--clay-dark); border-bottom-color: var(--clay); background: var(--clay-light); }
+
+  .container { max-width: 1380px; margin: 0 auto; padding: 16px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Banner illustrativo fase */
+  .hero-strip {
+    background: white; border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 18px; margin-bottom: 16px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .hero-strip-text { flex: 1; min-width: 260px; font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
+  .hero-strip-text strong { color: var(--text); }
+  .legend-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip-direct {
+    background: #dcfce7; color: #166534; border: 1px solid #86efac;
+    padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+  }
+  .chip-playin {
+    background: #ffedd5; color: #9a3412; border: 1px solid #fdba74;
+    padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card); border-radius: 14px; padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--clay), var(--court-green));
+  }
+  .card h2 {
+    margin: 2px 0 12px 0; font-size: 1.08rem; color: var(--clay-dark);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card-title-left { display: flex; align-items: center; gap: 8px; }
+  .card-sub {
+    font-size: 0.76rem; font-weight: 700; color: var(--court-green);
+    background: var(--court-green-soft); padding: 3px 9px; border-radius: 999px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-bottom: 12px; }
+  th, td { padding: 7px 5px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 700; font-size: 0.76rem; text-transform: uppercase; }
+  td.num, th.num { text-align: center; }
+  tr.row-direct { background: #f0fdf4; }
+  tr.row-playin { background: #fff7ed; }
+
+  input[type="text"] {
+    width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 0.88rem; font-weight: 600; color: var(--text); background: rgba(255,255,255,0.85);
+  }
+  input[type="number"] {
+    width: 50px; height: 38px; text-align: center; border: 1.5px solid #cbd5e1; border-radius: 8px;
+    font-size: 1rem; font-weight: 800; background: #fafaf9; color: var(--text);
+  }
+  input[type="number"]:focus, input[type="text"]:focus {
+    outline: none; border-color: var(--clay); background: #fff;
+  }
+  input[type="number"].invalid-score {
+    border-color: #dc2626; background: #fef2f2; color: #991b1b;
+  }
+
+  .match-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+  }
+  .match-row:last-child { border-bottom: none; }
+  .match-tag {
+    font-size: 0.74rem; font-weight: 800; background: var(--clay-light); color: var(--clay-dark);
+    border: 1px solid #fed7aa; padding: 3px 6px; border-radius: 5px; min-width: 30px; text-align: center;
+  }
+  .match-players { flex: 1; font-size: 0.9rem; font-weight: 500; }
+  .match-players .winner-name { font-weight: 800; color: var(--court-green); }
+  .match-scores { display: flex; align-items: center; gap: 6px; }
+
+  .badge-pos {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center;
+    border-radius: 50%; font-weight: 800; font-size: 0.78rem;
+  }
+  .pos-1 { background: #bbf7d0; color: #14532d; }
+  .pos-2 { background: #fed7aa; color: #9a3412; }
+  .pos-3 { background: #fde68a; color: #92400e; }
+  .pos-4 { background: #ffedd5; color: #9a3412; }
+
+  .status-tag {
+    font-size: 0.68rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+    text-transform: uppercase; white-space: nowrap;
+  }
+  .st-direct { background: #dcfce7; color: #166534; }
+  .st-playin { background: #ffedd5; color: #9a3412; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: center; }
+  select {
+    padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;
+    background: white; min-height: 42px; font-weight: 600;
+  }
+  .sched-card {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 12px 14px; background: white; border-radius: 11px; border: 1px solid var(--border);
+    border-left: 5px solid var(--clay); margin-bottom: 8px;
+  }
+  .sched-card.done { background: #f0fdf4; border-color: #bbf7d0; border-left-color: var(--court-green); }
+  .sched-meta { font-size: 0.8rem; color: var(--muted); font-weight: 700; }
+
+  /* Tabellone Preliminari + Eliminazione Diretta */
+  .bracket-scroll {
+    overflow-x: auto; padding-bottom: 10px;
+  }
+  .bracket-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(255px, 1fr));
+    gap: 16px;
+    min-width: 1320px;
+  }
+  .round-col {
+    background: rgba(255,255,255,0.65); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px;
+  }
+  .round-col.prelim-col {
+    background: #fff7ed; border-color: #fed7aa;
+  }
+  .round-title {
+    margin: 0 0 12px 0; font-size: 0.96rem; font-weight: 800; color: var(--court-green);
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 8px; border-bottom: 2px solid var(--border);
+  }
+  .prelim-col .round-title { color: var(--clay-dark); border-bottom-color: #fed7aa; }
+
+  .ko-match {
+    background: white; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .ko-header {
+    font-size: 0.74rem; font-weight: 700; color: var(--muted); margin-bottom: 7px;
+    display: flex; justify-content: space-between;
+  }
+  .ko-team {
+    display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    margin-bottom: 5px; font-size: 0.86rem;
+  }
+  .ko-team:last-child { margin-bottom: 0; }
+  .ko-team span { line-height: 1.25; }
+  .ko-team.winner span { font-weight: 800; color: var(--court-green); }
+  .seed-pill {
+    display: inline-block; font-size: 0.7rem; font-weight: 800;
+    background: #f1f5f9; color: #475569; padding: 1px 5px; border-radius: 4px; margin-right: 4px;
+  }
+
+  .champion-banner {
+    background: linear-gradient(135deg, #fef08a, #fde047); border: 2px solid #eab308;
+    border-radius: 14px; padding: 18px; text-align: center; margin-bottom: 16px; display: none;
+    box-shadow: 0 4px 12px rgba(234,179,8,0.22);
+  }
+  .champion-banner h2 { margin: 0; color: #713f12; font-size: 1.35rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+  @media print {
+    header, .tabs, .filters, button, .ipad-notice, .rules-bar, .hero-strip { display: none !important; }
+    .section { display: block !important; page-break-after: always; }
+    body { background: white; }
+    .bracket-grid { min-width: 0; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <!-- Sfondo vettoriale linee campo da tennis -->
+  <svg class="court-lines-bg" viewBox="0 0 1200 180" preserveAspectRatio="none">
+    <rect x="40" y="15" width="1120" height="150" fill="none" stroke="#ffffff" stroke-width="4"/>
+    <line x1="40" y1="38" x2="1160" y2="38" stroke="#ffffff" stroke-width="2.5"/>
+    <line x1="40" y1="142" x2="1160" y2="142" stroke="#ffffff" stroke-width="2.5"/>
+    <line x1="600" y1="10" x2="600" y2="170" stroke="#ffffff" stroke-width="4" stroke-dasharray="8 6"/>
+    <line x1="320" y1="38" x2="320" y2="142" stroke="#ffffff" stroke-width="2.5"/>
+    <line x1="880" y1="38" x2="880" y2="142" stroke="#ffffff" stroke-width="2.5"/>
+    <line x1="320" y1="90" x2="880" y2="90" stroke="#ffffff" stroke-width="2.5"/>
+  </svg>
+
+  <div class="header-inner">
+    <div class="brand-box">
+      <!-- Emblema SVG racchette incrociate + pallina da tennis -->
+      <div class="brand-emblem" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 64 64" fill="none">
+          <!-- Racchetta 1 -->
+          <g transform="rotate(-38 32 32)">
+            <ellipse cx="32" cy="20" rx="11" ry="15" stroke="#ffffff" stroke-width="3.2" fill="rgba(255,255,255,0.1)"/>
+            <line x1="26" y1="10" x2="26" y2="30" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="32" y1="6" x2="32" y2="34" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="38" y1="10" x2="38" y2="30" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="22" y1="16" x2="42" y2="16" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="22" y1="24" x2="42" y2="24" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <path d="M27 34 L32 42 L37 34" stroke="#ffffff" stroke-width="2.5" fill="none"/>
+            <rect x="30" y="42" width="4" height="16" rx="2" fill="#ffffff"/>
+          </g>
+          <!-- Racchetta 2 -->
+          <g transform="rotate(38 32 32)">
+            <ellipse cx="32" cy="20" rx="11" ry="15" stroke="#ffffff" stroke-width="3.2" fill="rgba(255,255,255,0.1)"/>
+            <line x1="26" y1="10" x2="26" y2="30" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="32" y1="6" x2="32" y2="34" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="38" y1="10" x2="38" y2="30" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="22" y1="16" x2="42" y2="16" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <line x1="22" y1="24" x2="42" y2="24" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+            <path d="M27 34 L32 42 L37 34" stroke="#ffffff" stroke-width="2.5" fill="none"/>
+            <rect x="30" y="42" width="4" height="16" rx="2" fill="#ffffff"/>
+          </g>
+          <!-- Pallina da tennis -->
+          <circle cx="32" cy="49" r="7.5" fill="#bef264" stroke="#365314" stroke-width="1.5"/>
+          <path d="M26.5 44.5 C30 47.5, 30 50.5, 26.5 53.5" stroke="#ffffff" stroke-width="1.4" fill="none"/>
+          <path d="M37.5 44.5 C34 47.5, 34 50.5, 37.5 53.5" stroke="#ffffff" stroke-width="1.4" fill="none"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Torneo Tennis Singolo · 26 Giocatori (Tutti Qualificati)</h1>
+        <div class="header-subtitle">8 Gironi (A–H) al meglio dei 4 game → Turno Preliminare (20 gioc.) + 6 Teste di Serie agli Ottavi (16)</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-ball" onclick="reshufflePlayers()">🔀 Rimescola Giocatori</button>
+      <button class="btn-light" onclick="exportJSON()">💾 Esporta JSON</button>
+      <button class="btn-light" onclick="document.getElementById('importFile').click()">📂 Importa</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+      <button class="btn-light" onclick="window.print()">🖨️ Stampa</button>
+      <button class="btn-danger" onclick="resetTournament()">🔄 Reset</button>
+    </div>
+  </div>
+</header>
+
+<div id="jsWarning" class="ipad-notice">
+  ⚠️ <strong>Nota per iPad / iPhone:</strong> Se stai guardando questo file nell'anteprima dell'app <em>File</em> o <em>Google Drive</em>, i pulsanti e i calcoli automatici sono disattivati dal sistema. Tocca l'icona <strong>Condividi (quadrato con freccia) → Apri in Safari</strong> (oppure Chrome) per compilare e salvare i risultati.
+</div>
+
+<div class="rules-bar">
+  <div class="rules-inner">
+    <div class="rule-pill">
+      <!-- Mini icona pallina da tennis -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" fill="#bef264" stroke="#3f6212" stroke-width="1.8"/>
+        <path d="M5.5 6.5 C10 10, 10 14, 5.5 17.5" stroke="#ffffff" stroke-width="1.8" fill="none"/>
+        <path d="M18.5 6.5 C14 10, 14 14, 18.5 17.5" stroke="#ffffff" stroke-width="1.8" fill="none"/>
+      </svg>
+      <span><strong>Formato Partite:</strong> Al meglio dei 4 game (4-0, 4-1, 4-2, 4-3 TB sul 3-3, o 5-3 / 5-4 TB sul 4-4)</span>
+    </div>
+    <div class="rule-pill">
+      <span><strong>Qualificazione a 26:</strong> I <strong>6 migliori 1°</strong> vanno diretti agli Ottavi; gli altri <strong>20 giocatori</strong> giocano i <strong>10 Preliminari</strong> per completare il tabellone a 16.</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('groups', this)">
+    <span>🎾 1. Gironi A–H & Classifiche</span>
+  </div>
+  <div class="tab" onclick="switchTab('schedule', this)">
+    <span>📅 2. Orari & Campi (30 partite)</span>
+  </div>
+  <div class="tab" onclick="switchTab('bracket', this)">
+    <span>🏆 3. Preliminari (20) + Tabellone Finale (16)</span>
+  </div>
+</div>
+
+<div class="container">
+  <!-- SEZIONE 1: GIRONI -->
+  <div id="sec-groups" class="section active">
+    <div class="hero-strip">
+      <!-- Illustrazione SVG campo da tennis in prospettiva -->
+      <svg width="110" height="66" viewBox="0 0 110 66" fill="none" style="flex-shrink:0;">
+        <rect x="4" y="4" width="102" height="58" rx="6" fill="#c85228" stroke="#9e3a16" stroke-width="2"/>
+        <rect x="14" y="10" width="82" height="46" fill="none" stroke="#ffffff" stroke-width="1.6"/>
+        <line x1="14" y1="16" x2="96" y2="16" stroke="#ffffff" stroke-width="1.1"/>
+        <line x1="14" y1="50" x2="96" y2="50" stroke="#ffffff" stroke-width="1.1"/>
+        <line x1="55" y1="8" x2="55" y2="58" stroke="#ffffff" stroke-width="2" stroke-dasharray="3 2"/>
+        <line x1="33" y1="16" x2="33" y2="50" stroke="#ffffff" stroke-width="1.1"/>
+        <line x1="77" y1="16" x2="77" y2="50" stroke="#ffffff" stroke-width="1.1"/>
+        <line x1="33" y1="33" x2="77" y2="33" stroke="#ffffff" stroke-width="1.1"/>
+        <circle cx="72" cy="24" r="4" fill="#bef264" stroke="#365314" stroke-width="1"/>
+      </svg>
+      <div class="hero-strip-text">
+        <strong>Tutti i 26 giocatori accedono alla fase finale!</strong> I primi classificati di ogni girone vengono ordinati in una classifica generale (media punti/partita e diff. game):
+        <div class="legend-chips">
+          <span class="chip-direct">1° Posto (Top 6 → Ottavi di Finale diretti)</span>
+          <span class="chip-playin">2°, 3°, 4° + 2 migliori 1° → Turno Preliminare (10 incontri)</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2" id="groupsContainer"></div>
+  </div>
+
+  <!-- SEZIONE 2: ORARI E CAMPI -->
+  <div id="sec-schedule" class="section">
+    <div class="filters">
+      <select id="formatSelect" onchange="changeFormat()">
+        <option value="1d3c">Formato: 1 Giorno · 3 Campi (slot 25' · set ai 4 game)</option>
+        <option value="1d4c">Formato: 1 Giorno · 4 Campi (slot 25' · set ai 4 game)</option>
+        <option value="2d2c">Formato: 2 Giorni · 2 Campi (slot 30' · Sab/Dom)</option>
+      </select>
+      <select id="groupFilter" onchange="renderSchedule()">
+        <option value="ALL">Tutti i gironi (A–H)</option>
+        <option value="A">Girone A (4 gioc.)</option>
+        <option value="B">Girone B (4 gioc.)</option>
+        <option value="C">Girone C (3 gioc.)</option>
+        <option value="D">Girone D (3 gioc.)</option>
+        <option value="E">Girone E (3 gioc.)</option>
+        <option value="F">Girone F (3 gioc.)</option>
+        <option value="G">Girone G (3 gioc.)</option>
+        <option value="H">Girone H (3 gioc.)</option>
+      </select>
+      <select id="courtFilter" onchange="renderSchedule()">
+        <option value="ALL">Tutti i campi</option>
+        <option value="Campo 1">Campo 1</option>
+        <option value="Campo 2">Campo 2</option>
+        <option value="Campo 3">Campo 3</option>
+        <option value="Campo 4">Campo 4</option>
+      </select>
+      <select id="statusFilter" onchange="renderSchedule()">
+        <option value="ALL">Tutte le partite (30)</option>
+        <option value="TODO">Da giocare</option>
+        <option value="DONE">Completate</option>
+      </select>
+    </div>
+    <div id="scheduleContainer"></div>
+  </div>
+
+  <!-- SEZIONE 3: TABELLONE FINALE -->
+  <div id="sec-bracket" class="section">
+    <div class="hero-strip">
+      <!-- Illustrazione SVG Trofeo & Palline -->
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="flex-shrink:0;">
+        <path d="M20 12 H44 V24 C44 32 38 38 32 38 C26 38 20 32 20 24 Z" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+        <path d="M20 16 H13 C11 16 10 18 10 20 C10 25 14 28 20 28" stroke="#b45309" stroke-width="2.5" fill="none"/>
+        <path d="M44 16 H51 C53 16 54 18 54 20 C54 25 50 28 44 28" stroke="#b45309" stroke-width="2.5" fill="none"/>
+        <rect x="29" y="38" width="6" height="10" fill="#d97706"/>
+        <rect x="21" y="48" width="22" height="6" rx="2" fill="#78350f"/>
+        <circle cx="50" cy="48" r="6.5" fill="#bef264" stroke="#3f6212" stroke-width="1.5"/>
+        <path d="M45.5 44.5 C48.5 47, 48.5 49, 45.5 51.5" stroke="#ffffff" stroke-width="1.3" fill="none"/>
+      </svg>
+      <div class="hero-strip-text">
+        <strong>Struttura Fase Finale a 26 Giocatori:</strong><br>
+        • <strong>Turno Preliminare (10 partite · 20 giocatori):</strong> dal 7° al 26° del ranking dei gironi si sfidano per conquistare gli ultimi 10 posti negli Ottavi.<br>
+        • <strong>Ottavi di Finale (8 partite · 16 giocatori):</strong> le <strong>6 Teste di Serie</strong> (migliori 6 primi dei gironi) attendono i 10 vincitori dei Preliminari.
+      </div>
+      <button class="btn-clay" onclick="generateBracketFromGroups()">⚡ Genera / Aggiorna Tabellone dai Gironi</button>
+    </div>
+
+    <div id="championBanner" class="champion-banner">
+      <h2>
+        <span>🏆 Campione del Torneo: <span id="championName"></span> 🏆</span>
+      </h2>
+    </div>
+
+    <div class="bracket-scroll">
+      <div class="bracket-grid" id="bracketContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('jsWarning').style.display = 'none';
+
+const STORAGE_KEY = 'tennis_singolo_26_all_qual_v1';
+const GROUP_KEYS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+const ALL_26_PLAYERS = [
+  "BOVI C.", "CORTESE S.", "CULLEMI S.", "MANFRE M.", "CORSO A.",
+  "LIZZIO G.", "MONCADA V.", "ACCARDO A.", "ARMENIA G.", "ATANASIO F.",
+  "CRUCITTI A.", "DI GREGORIO G.", "DI PAOLA D.", "FARACI R.", "RIDOLFO F.",
+  "TROIA S.", "TROIA L.", "LANZA M.", "CONFALONE F.", "GIANNI G.",
+  "MANIA G.", "MUSCO O.", "PILADE R.", "BELLUOMO L.", "SPATOLA A.",
+  "GIANSIRACUSA D."
+];
+
+function makeMatches4(prefix) {
+  return [
+    { id: prefix + '1', turn: 'T1', p1: 0, p2: 3, s1: '', s2: '' },
+    { id: prefix + '2', turn: 'T1', p1: 1, p2: 2, s1: '', s2: '' },
+    { id: prefix + '3', turn: 'T2', p1: 0, p2: 2, s1: '', s2: '' },
+    { id: prefix + '4', turn: 'T2', p1: 1, p2: 3, s1: '', s2: '' },
+    { id: prefix + '5', turn: 'T3', p1: 0, p2: 1, s1: '', s2: '' },
+    { id: prefix + '6', turn: 'T3', p1: 2, p2: 3, s1: '', s2: '' }
+  ];
+}
+
+function makeMatches3(prefix) {
+  return [
+    { id: prefix + '1', turn: 'T1', p1: 0, p2: 1, s1: '', s2: '' },
+    { id: prefix + '2', turn: 'T2', p1: 1, p2: 2, s1: '', s2: '' },
+    { id: prefix + '3', turn: 'T3', p1: 0, p2: 2, s1: '', s2: '' }
+  ];
+}
+
+const defaultState = {
+  format: '1d3c',
+  groups: {
+    A: { name: 'Girone A', players: ['GIANNI G.', 'MONCADA V.', 'TROIA S.', 'FARACI R.'], matches: makeMatches4('A') },
+    B: { name: 'Girone B', players: ['CRUCITTI A.', 'MANIA G.', 'SPATOLA A.', 'MANFRE M.'], matches: makeMatches4('B') },
+    C: { name: 'Girone C', players: ['DI GREGORIO G.', 'BOVI C.', 'TROIA L.'], matches: makeMatches3('C') },
+    D: { name: 'Girone D', players: ['CULLEMI S.', 'MUSCO O.', 'GIANSIRACUSA D.'], matches: makeMatches3('D') },
+    E: { name: 'Girone E', players: ['RIDOLFO F.', 'BELLUOMO L.', 'ACCARDO A.'], matches: makeMatches3('E') },
+    F: { name: 'Girone F', players: ['DI PAOLA D.', 'PILADE R.', 'LIZZIO G.'], matches: makeMatches3('F') },
+    G: { name: 'Girone G', players: ['CORSO A.', 'LANZA M.', 'ATANASIO F.'], matches: makeMatches3('G') },
+    H: { name: 'Girone H', players: ['ARMENIA G.', 'CONFALONE F.', 'CORTESE S.'], matches: makeMatches3('H') }
+  },
+  ko: {
+    prelim: [
+      { id: 'P1', label: 'Prelim. 1 (Rank #16 vs #17)', t1: 'Rank #16', t2: 'Rank #17', s1: '', s2: '' },
+      { id: 'P2', label: 'Prelim. 2 (Rank #9 vs #24)',  t1: 'Rank #9',  t2: 'Rank #24', s1: '', s2: '' },
+      { id: 'P3', label: 'Prelim. 3 (Rank #12 vs #21)', t1: 'Rank #12', t2: 'Rank #21', s1: '', s2: '' },
+      { id: 'P4', label: 'Prelim. 4 (Rank #13 vs #20)', t1: 'Rank #13', t2: 'Rank #20', s1: '', s2: '' },
+      { id: 'P5', label: 'Prelim. 5 (Rank #14 vs #19)', t1: 'Rank #14', t2: 'Rank #19', s1: '', s2: '' },
+      { id: 'P6', label: 'Prelim. 6 (Rank #11 vs #22)', t1: 'Rank #11', t2: 'Rank #22', s1: '', s2: '' },
+      { id: 'P7', label: 'Prelim. 7 (Rank #10 vs #23)', t1: 'Rank #10', t2: 'Rank #23', s1: '', s2: '' },
+      { id: 'P8', label: 'Prelim. 8 (Rank #7 vs #26)',  t1: 'Rank #7',  t2: 'Rank #26', s1: '', s2: '' },
+      { id: 'P9', label: 'Prelim. 9 (Rank #8 vs #25)',  t1: 'Rank #8',  t2: 'Rank #25', s1: '', s2: '' },
+      { id: 'P10', label: 'Prelim. 10 (Rank #15 vs #18)', t1: 'Rank #15', t2: 'Rank #18', s1: '', s2: '' }
+    ],
+    r16: [
+      { id: 'O1', label: 'Ottavo 1 (TDS #1 vs P1)',  t1: 'TDS #1 (Miglior 1°)', t2: 'Vinc. P1', s1: '', s2: '' },
+      { id: 'O2', label: 'Ottavo 2 (P2 vs P3)',      t1: 'Vinc. P2',            t2: 'Vinc. P3', s1: '', s2: '' },
+      { id: 'O3', label: 'Ottavo 3 (TDS #4 vs P4)',  t1: 'TDS #4 (4° Migl. 1°)', t2: 'Vinc. P4', s1: '', s2: '' },
+      { id: 'O4', label: 'Ottavo 4 (TDS #5 vs P5)',  t1: 'TDS #5 (5° Migl. 1°)', t2: 'Vinc. P5', s1: '', s2: '' },
+      { id: 'O5', label: 'Ottavo 5 (TDS #2 vs P6)',  t1: 'TDS #2 (2° Migl. 1°)', t2: 'Vinc. P6', s1: '', s2: '' },
+      { id: 'O6', label: 'Ottavo 6 (TDS #3 vs P7)',  t1: 'TDS #3 (3° Migl. 1°)', t2: 'Vinc. P7', s1: '', s2: '' },
+      { id: 'O7', label: 'Ottavo 7 (P8 vs P9)',      t1: 'Vinc. P8',            t2: 'Vinc. P9', s1: '', s2: '' },
+      { id: 'O8', label: 'Ottavo 8 (TDS #6 vs P10)', t1: 'TDS #6 (6° Migl. 1°)', t2: 'Vinc. P10', s1: '', s2: '' }
+    ],
+    qf: [
+      { id: 'Q1', label: 'Quarto 1', t1: 'Vinc. O1', t2: 'Vinc. O2', s1: '', s2: '' },
+      { id: 'Q2', label: 'Quarto 2', t1: 'Vinc. O3', t2: 'Vinc. O4', s1: '', s2: '' },
+      { id: 'Q3', label: 'Quarto 3', t1: 'Vinc. O5', t2: 'Vinc. O6', s1: '', s2: '' },
+      { id: 'Q4', label: 'Quarto 4', t1: 'Vinc. O7', t2: 'Vinc. O8', s1: '', s2: '' }
+    ],
+    sf: [
+      { id: 'S1', label: 'Semifinale 1', t1: 'Vinc. Q1', t2: 'Vinc. Q2', s1: '', s2: '' },
+      { id: 'S2', label: 'Semifinale 2', t1: 'Vinc. Q3', t2: 'Vinc. Q4', s1: '', s2: '' }
+    ],
+    finals: [
+      { id: 'F1', label: '🏆 Finale 1°/2° Posto', t1: 'Vinc. S1', t2: 'Vinc. S2', s1: '', s2: '' },
+      { id: 'F3', label: '🥉 Finale 3°/4° Posto', t1: 'Perd. S1', t2: 'Perd. S2', s1: '', s2: '' }
+    ]
+  }
+};
+
+let state = null;
+try {
+  state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+} catch (e) {}
+if (!state) state = JSON.parse(JSON.stringify(defaultState));
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+function switchTab(tabName, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sec-' + tabName).classList.add('active');
+  if (tabName === 'schedule') renderSchedule();
+  if (tabName === 'bracket') renderBracket();
+}
+
+function isValidFourGameSet(s1, s2) {
+  if (isNaN(s1) || isNaN(s2)) return false;
+  if (s1 < 0 || s2 < 0 || s1 > 5 || s2 > 5) return false;
+  if (s1 === s2) return false;
+  const hi = Math.max(s1, s2), lo = Math.min(s1, s2);
+  if (hi === 4 && lo <= 3) return true;
+  if (hi === 5 && (lo === 3 || lo === 4)) return true;
+  return false;
+}
+
+function computeStandings(groupKey) {
+  const g = state.groups[groupKey];
+  const stats = g.players.map((name, idx) => ({
+    idx, groupKey, name, played: 0, won: 0, pts: 0, gf: 0, ga: 0, diff: 0
+  }));
+
+  g.matches.forEach(m => {
+    if (m.s1 !== '' && m.s2 !== '' && !isNaN(m.s1) && !isNaN(m.s2)) {
+      const s1 = parseInt(m.s1, 10);
+      const s2 = parseInt(m.s2, 10);
+      if (s1 === s2) return;
+      stats[m.p1].played++;
+      stats[m.p2].played++;
+      stats[m.p1].gf += s1; stats[m.p1].ga += s2;
+      stats[m.p2].gf += s2; stats[m.p2].ga += s1;
+      if (s1 > s2) {
+        stats[m.p1].won++; stats[m.p1].pts += 2;
+      } else {
+        stats[m.p2].won++; stats[m.p2].pts += 2;
+      }
+    }
+  });
+
+  stats.forEach(s => s.diff = s.gf - s.ga);
+
+  stats.sort((a, b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts;
+    const tied = stats.filter(x => x.pts === a.pts);
+    if (tied.length === 2) {
+      const h2h = g.matches.find(m =>
+        (m.p1 === a.idx && m.p2 === b.idx) || (m.p1 === b.idx && m.p2 === a.idx)
+      );
+      if (h2h && h2h.s1 !== '' && h2h.s2 !== '') {
+        const s1 = parseInt(h2h.s1, 10), s2 = parseInt(h2h.s2, 10);
+        if (s1 !== s2) {
+          const winnerIdx = s1 > s2 ? h2h.p1 : h2h.p2;
+          return winnerIdx === a.idx ? -1 : 1;
+        }
+      }
+    }
+    if (b.diff !== a.diff) return b.diff - a.diff;
+    return b.gf - a.gf;
+  });
+
+  return stats;
+}
+
+// Ordina tutti i 26 giocatori per fascia di piazzamento (1° di girone, poi 2°, poi 3°, poi 4°)
+// Normalizza per partite giocate (media punti e diff game/partita) per confrontare gironi da 4 e da 3
+function getOverallRankedPlayers() {
+  const allByPos = [[], [], [], []];
+  GROUP_KEYS.forEach(k => {
+    const st = computeStandings(k);
+    st.forEach((player, pos) => {
+      const denom = player.played > 0 ? player.played : 1;
+      allByPos[pos].push({
+        ...player,
+        pos: pos + 1,
+        ppg: player.pts / denom,
+        dpg: player.diff / denom,
+        gfpg: player.gf / denom
+      });
+    });
+  });
+
+  allByPos.forEach(bucket => {
+    bucket.sort((a, b) => {
+      if (Math.abs(b.ppg - a.ppg) > 1e-6) return b.ppg - a.ppg;
+      if (Math.abs(b.dpg - a.dpg) > 1e-6) return b.dpg - a.dpg;
+      if (Math.abs(b.gfpg - a.gfpg) > 1e-6) return b.gfpg - a.gfpg;
+      return a.groupKey.localeCompare(b.groupKey);
+    });
+  });
+
+  return [...allByPos[0], ...allByPos[1], ...allByPos[2], ...allByPos[3]];
+}
+
+function renderGroups() {
+  const container = document.getElementById('groupsContainer');
+  container.innerHTML = '';
+
+  const overall = getOverallRankedPlayers();
+  const top6Keys = new Set(overall.slice(0, 6).map(p => p.groupKey + '-' + p.idx));
+
+  GROUP_KEYS.forEach(gKey => {
+    const g = state.groups[gKey];
+    const standings = computeStandings(gKey);
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    let standingsRows = standings.map((s, pos) => {
+      const isDirectR16 = top6Keys.has(gKey + '-' + s.idx);
+      return `
+      <tr class="${isDirectR16 ? 'row-direct' : 'row-playin'}">
+        <td class="num"><span class="badge-pos pos-${pos+1}">${pos+1}</span></td>
+        <td><input type="text" value="${s.name}" onchange="updatePlayerName('${gKey}', ${s.idx}, this.value)"></td>
+        <td class="num"><strong>${s.pts}</strong></td>
+        <td class="num">${s.played}</td>
+        <td class="num">${s.gf}-${s.ga}</td>
+        <td class="num">${s.diff >= 0 ? '+' + s.diff : s.diff}</td>
+        <td><span class="status-tag ${isDirectR16 ? 'st-direct' : 'st-playin'}">${isDirectR16 ? 'Ottavi' : 'Prelim.'}</span></td>
+      </tr>
+    `;
+    }).join('');
+
+    let matchesHtml = g.matches.map((m, mIdx) => {
+      const hasBoth = m.s1 !== '' && m.s2 !== '';
+      const s1 = parseInt(m.s1, 10), s2 = parseInt(m.s2, 10);
+      const valid = !hasBoth || isValidFourGameSet(s1, s2);
+      const w1 = hasBoth && s1 > s2 ? 'winner-name' : '';
+      const w2 = hasBoth && s2 > s1 ? 'winner-name' : '';
+      return `
+      <div class="match-row">
+        <span class="match-tag">${m.turn}</span>
+        <div class="match-players">
+          <div class="${w1}">${g.players[m.p1]}</div>
+          <div class="${w2}">${g.players[m.p2]}</div>
+        </div>
+        <div class="match-scores" title="Set ai 4 game (es. 4-2, 4-3, 5-3, 5-4)">
+          <input type="number" min="0" max="5" class="${valid ? '' : 'invalid-score'}" value="${m.s1}" placeholder="-" onchange="updateGroupScore('${gKey}', ${mIdx}, 1, this.value)">
+          <span>-</span>
+          <input type="number" min="0" max="5" class="${valid ? '' : 'invalid-score'}" value="${m.s2}" placeholder="-" onchange="updateGroupScore('${gKey}', ${mIdx}, 2, this.value)">
+        </div>
+      </div>
+    `;
+    }).join('');
+
+    card.innerHTML = `
+      <h2>
+        <span class="card-title-left">
+          <span>🎾 ${g.name}</span>
+        </span>
+        <span class="card-sub">${g.players.length} giocatori · Set ai 4 game</span>
+      </h2>
+      <table>
+        <thead>
+          <tr><th class="num">#</th><th>Giocatore</th><th class="num">Pt</th><th class="num">G</th><th class="num">Game</th><th class="num">Diff</th><th>Fase</th></tr>
+        </thead>
+        <tbody>${standingsRows}</tbody>
+      </table>
+      <div style="font-size:0.78rem; font-weight:800; color:var(--muted); margin: 10px 0 4px;">INCONTRI GIRONE (SET AI 4 GAME)</div>
+      ${matchesHtml}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updatePlayerName(gKey, idx, val) {
+  state.groups[gKey].players[idx] = val.trim() || `Giocatore ${gKey}${idx+1}`;
+  saveState();
+  renderGroups();
+}
+
+function updateGroupScore(gKey, mIdx, side, val) {
+  const m = state.groups[gKey].matches[mIdx];
+  if (val !== '') {
+    let num = parseInt(val, 10);
+    if (isNaN(num) || num < 0) num = 0;
+    if (num > 5) num = 5;
+    val = String(num);
+  }
+  if (side === 1) m.s1 = val;
+  else m.s2 = val;
+  saveState();
+  renderGroups();
+  if (document.getElementById('sec-schedule').classList.contains('active')) renderSchedule();
+}
+
+const ORDERED_30_MATCHES = [
+  ['A', 0], ['A', 1], ['B', 0], ['B', 1], ['C', 0], ['D', 0], ['E', 0], ['F', 0], ['G', 0], ['H', 0],
+  ['A', 2], ['A', 3], ['B', 2], ['B', 3], ['C', 1], ['D', 1], ['E', 1], ['F', 1], ['G', 1], ['H', 1],
+  ['A', 4], ['A', 5], ['B', 4], ['B', 5], ['C', 2], ['D', 2], ['E', 2], ['F', 2], ['G', 2], ['H', 2]
+];
+
+function buildSchedules() {
+  const slots1d3c = [
+    '09:00', '09:25', '09:50', '10:15', '10:40', '11:05',
+    '11:30', '11:55', '12:20', '12:45'
+  ];
+  const s1d3c = ORDERED_30_MATCHES.map(([gKey, mIdx], i) => {
+    const slot = slots1d3c[Math.floor(i / 3)];
+    const court = 'Campo ' + ((i % 3) + 1);
+    return [slot, court, gKey, mIdx];
+  });
+
+  const slots1d4c = [
+    '09:00', '09:25', '09:50', '10:15',
+    '10:40', '11:05', '11:30', '11:55'
+  ];
+  const s1d4c = ORDERED_30_MATCHES.map(([gKey, mIdx], i) => {
+    const slot = slots1d4c[Math.floor(i / 4)];
+    const court = 'Campo ' + ((i % 4) + 1);
+    return [slot, court, gKey, mIdx];
+  });
+
+  const slots2d2c = [
+    'Sab 09:00', 'Sab 09:30', 'Sab 10:00', 'Sab 10:30', 'Sab 11:00',
+    'Sab 15:00', 'Sab 15:30', 'Sab 16:00', 'Sab 16:30', 'Sab 17:00',
+    'Dom 09:00', 'Dom 09:30', 'Dom 10:00', 'Dom 10:30', 'Dom 11:00'
+  ];
+  const s2d2c = ORDERED_30_MATCHES.map(([gKey, mIdx], i) => {
+    const slot = slots2d2c[Math.floor(i / 2)];
+    const court = 'Campo ' + ((i % 2) + 1);
+    return [slot, court, gKey, mIdx];
+  });
+
+  return { '1d3c': s1d3c, '1d4c': s1d4c, '2d2c': s2d2c };
+}
+
+const scheduleTemplates = buildSchedules();
+
+function changeFormat() {
+  state.format = document.getElementById('formatSelect').value;
+  saveState();
+  renderSchedule();
+}
+
+function renderSchedule() {
+  document.getElementById('formatSelect').value = state.format;
+  const groupF = document.getElementById('groupFilter').value;
+  const courtF = document.getElementById('courtFilter').value;
+  const statusF = document.getElementById('statusFilter').value;
+  const list = scheduleTemplates[state.format] || scheduleTemplates['1d3c'];
+  const container = document.getElementById('scheduleContainer');
+  container.innerHTML = '';
+
+  list.forEach(([time, court, gKey, mIdx]) => {
+    if (groupF !== 'ALL' && gKey !== groupF) return;
+    if (courtF !== 'ALL' && court !== courtF) return;
+    const g = state.groups[gKey];
+    const m = g.matches[mIdx];
+    const isDone = m.s1 !== '' && m.s2 !== '';
+    if (statusF === 'TODO' && isDone) return;
+    if (statusF === 'DONE' && !isDone) return;
+
+    const div = document.createElement('div');
+    div.className = 'sched-card' + (isDone ? ' done' : '');
+    div.innerHTML = `
+      <div>
+        <div class="sched-meta">🕒 ${time} · 🏟️ ${court} · Girone ${gKey} (${m.turn})</div>
+        <div style="font-weight:700; margin-top:4px;">${g.players[m.p1]} <span style="color:var(--muted)">vs</span> ${g.players[m.p2]}</div>
+      </div>
+      <div class="match-scores">
+        <input type="number" min="0" max="5" value="${m.s1}" placeholder="-" onchange="updateGroupScore('${gKey}', ${mIdx}, 1, this.value)">
+        <span>-</span>
+        <input type="number" min="0" max="5" value="${m.s2}" placeholder="-" onchange="updateGroupScore('${gKey}', ${mIdx}, 2, this.value)">
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function formatSeededName(p, rankNum) {
+  return `#${rankNum} ${p.name} (${p.pos}°${p.groupKey})`;
+}
+
+function generateBracketFromGroups() {
+  const ranked = getOverallRankedPlayers(); // 26 giocatori ordinati dal #1 al #26
+
+  // Preliminari: dal #7 al #26 (indici 6..25)
+  const prelimPairs = [
+    [15, 16], // P1: #16 vs #17 (va contro TDS #1)
+    [8, 23],  // P2: #9 vs #24
+    [11, 20], // P3: #12 vs #21
+    [12, 19], // P4: #13 vs #20 (va contro TDS #4)
+    [13, 18], // P5: #14 vs #19 (va contro TDS #5)
+    [10, 21], // P6: #11 vs #22 (va contro TDS #2)
+    [9, 22],  // P7: #10 vs #23 (va contro TDS #3)
+    [6, 25],  // P8: #7 vs #26
+    [7, 24],  // P9: #8 vs #25
+    [14, 17]  // P10: #15 vs #18 (va contro TDS #6)
+  ];
+
+  prelimPairs.forEach(([idxA, idxB], pIdx) => {
+    state.ko.prelim[pIdx].label = `Prelim. ${pIdx+1} (#${idxA+1} vs #${idxB+1})`;
+    state.ko.prelim[pIdx].t1 = formatSeededName(ranked[idxA], idxA + 1);
+    state.ko.prelim[pIdx].t2 = formatSeededName(ranked[idxB], idxB + 1);
+  });
+
+  // Le 6 Teste di Serie dirette agli Ottavi (indici 0..5)
+  state.ko.r16[0].t1 = `TDS #1 ${ranked[0].name} (1°${ranked[0].groupKey})`;
+  state.ko.r16[2].t1 = `TDS #4 ${ranked[3].name} (1°${ranked[3].groupKey})`;
+  state.ko.r16[3].t1 = `TDS #5 ${ranked[4].name} (1°${ranked[4].groupKey})`;
+  state.ko.r16[4].t1 = `TDS #2 ${ranked[1].name} (1°${ranked[1].groupKey})`;
+  state.ko.r16[5].t1 = `TDS #3 ${ranked[2].name} (1°${ranked[2].groupKey})`;
+  state.ko.r16[7].t1 = `TDS #6 ${ranked[5].name} (1°${ranked[5].groupKey})`;
+
+  propagateKO();
+  saveState();
+  renderBracket();
+}
+
+function getMatchWinnerLoser(m) {
+  if (m.s1 === '' || m.s2 === '' || isNaN(m.s1) || isNaN(m.s2)) return { winner: null, loser: null };
+  const s1 = parseInt(m.s1, 10), s2 = parseInt(m.s2, 10);
+  if (s1 === s2) return { winner: null, loser: null };
+  return s1 > s2 ? { winner: m.t1, loser: m.t2 } : { winner: m.t2, loser: m.t1 };
+}
+
+function propagateKO() {
+  const pr = state.ko.prelim.map(getMatchWinnerLoser);
+
+  // Ottavi: innesto dei 10 vincitori dei Preliminari
+  state.ko.r16[0].t2 = pr[0].winner || 'Vinc. P1';
+  state.ko.r16[1].t1 = pr[1].winner || 'Vinc. P2';
+  state.ko.r16[1].t2 = pr[2].winner || 'Vinc. P3';
+  state.ko.r16[2].t2 = pr[3].winner || 'Vinc. P4';
+  state.ko.r16[3].t2 = pr[4].winner || 'Vinc. P5';
+  state.ko.r16[4].t2 = pr[5].winner || 'Vinc. P6';
+  state.ko.r16[5].t2 = pr[6].winner || 'Vinc. P7';
+  state.ko.r16[6].t1 = pr[7].winner || 'Vinc. P8';
+  state.ko.r16[6].t2 = pr[8].winner || 'Vinc. P9';
+  state.ko.r16[7].t2 = pr[9].winner || 'Vinc. P10';
+
+  const r16 = state.ko.r16.map(getMatchWinnerLoser);
+  state.ko.qf[0].t1 = r16[0].winner || 'Vinc. O1';
+  state.ko.qf[0].t2 = r16[1].winner || 'Vinc. O2';
+  state.ko.qf[1].t1 = r16[2].winner || 'Vinc. O3';
+  state.ko.qf[1].t2 = r16[3].winner || 'Vinc. O4';
+  state.ko.qf[2].t1 = r16[4].winner || 'Vinc. O5';
+  state.ko.qf[2].t2 = r16[5].winner || 'Vinc. O6';
+  state.ko.qf[3].t1 = r16[6].winner || 'Vinc. O7';
+  state.ko.qf[3].t2 = r16[7].winner || 'Vinc. O8';
+
+  const qf = state.ko.qf.map(getMatchWinnerLoser);
+  state.ko.sf[0].t1 = qf[0].winner || 'Vinc. Q1';
+  state.ko.sf[0].t2 = qf[1].winner || 'Vinc. Q2';
+  state.ko.sf[1].t1 = qf[2].winner || 'Vinc. Q3';
+  state.ko.sf[1].t2 = qf[3].winner || 'Vinc. Q4';
+
+  const sf = state.ko.sf.map(getMatchWinnerLoser);
+  state.ko.finals[0].t1 = sf[0].winner || 'Vinc. S1';
+  state.ko.finals[0].t2 = sf[1].winner || 'Vinc. S2';
+  state.ko.finals[1].t1 = sf[0].loser || 'Perd. S1';
+  state.ko.finals[1].t2 = sf[1].loser || 'Perd. S2';
+
+  const finalRes = getMatchWinnerLoser(state.ko.finals[0]);
+  const banner = document.getElementById('championBanner');
+  if (finalRes.winner) {
+    document.getElementById('championName').textContent = finalRes.winner;
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function updateKOScore(roundKey, idx, side, val) {
+  const m = state.ko[roundKey][idx];
+  if (val !== '') {
+    let num = parseInt(val, 10);
+    if (isNaN(num) || num < 0) num = 0;
+    if (num > 5) num = 5;
+    val = String(num);
+  }
+  if (side === 1) m.s1 = val;
+  else m.s2 = val;
+  propagateKO();
+  saveState();
+  renderBracket();
+}
+
+function renderBracket() {
+  propagateKO();
+  const container = document.getElementById('bracketContainer');
+  container.innerHTML = '';
+
+  const rounds = [
+    { key: 'prelim', title: '1. Preliminari (20 Gioc.)', isPrelim: true },
+    { key: 'r16', title: '2. Ottavi di Finale (16)', isPrelim: false },
+    { key: 'qf', title: '3. Quarti di Finale (8)', isPrelim: false },
+    { key: 'sf', title: '4. Semifinali (4)', isPrelim: false },
+    { key: 'finals', title: '5. Finali', isPrelim: false }
+  ];
+
+  rounds.forEach(r => {
+    const col = document.createElement('div');
+    col.className = 'round-col' + (r.isPrelim ? ' prelim-col' : '');
+    col.innerHTML = `<h3 class="round-title"><span>${r.title}</span><span>🎾</span></h3>`;
+    state.ko[r.key].forEach((m, idx) => {
+      const res = getMatchWinnerLoser(m);
+      const card = document.createElement('div');
+      card.className = 'ko-match';
+      card.innerHTML = `
+        <div class="ko-header"><span>${m.label}</span><span>4 game</span></div>
+        <div class="ko-team ${res.winner === m.t1 ? 'winner' : ''}">
+          <span>${m.t1}</span>
+          <input type="number" min="0" max="5" value="${m.s1}" placeholder="-" onchange="updateKOScore('${r.key}', ${idx}, 1, this.value)">
+        </div>
+        <div class="ko-team ${res.winner === m.t2 ? 'winner' : ''}">
+          <span>${m.t2}</span>
+          <input type="number" min="0" max="5" value="${m.s2}" placeholder="-" onchange="updateKOScore('${r.key}', ${idx}, 2, this.value)">
+        </div>
+      `;
+      col.appendChild(card);
+    });
+    container.appendChild(col);
+  });
+}
+
+function reshufflePlayers() {
+  if (!confirm('Vuoi rimescolare casualmente tutti i 26 giocatori negli 8 gironi? (Eventuali risultati dei gironi verranno azzerati)')) return;
+  const pool = [...ALL_26_PLAYERS];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  state.groups.A.players = pool.slice(0, 4);
+  state.groups.B.players = pool.slice(4, 8);
+  state.groups.C.players = pool.slice(8, 11);
+  state.groups.D.players = pool.slice(11, 14);
+  state.groups.E.players = pool.slice(14, 17);
+  state.groups.F.players = pool.slice(17, 20);
+  state.groups.G.players = pool.slice(20, 23);
+  state.groups.H.players = pool.slice(23, 26);
+
+  GROUP_KEYS.forEach(k => {
+    state.groups[k].matches.forEach(m => { m.s1 = ''; m.s2 = ''; });
+  });
+  saveState();
+  renderGroups();
+  renderSchedule();
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'torneo-singolo-26-tutti-qualificati-v2.json';
+  a.click();
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      state = JSON.parse(e.target.result);
+      saveState();
+      renderGroups();
+      renderSchedule();
+      renderBracket();
+      alert('Torneo importato con successo!');
+    } catch (err) {
+      alert('File JSON non valido.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetTournament() {
+  if (!confirm('Vuoi davvero azzerare tutti i risultati e ripristinare il sorteggio iniziale?')) return;
+  state = JSON.parse(JSON.stringify(defaultState));
+  saveState();
+  renderGroups();
+  renderSchedule();
+  renderBracket();
+}
+
+renderGroups();
+renderSchedule();
+renderBracket();
+</script>
+</body>
+</html>
